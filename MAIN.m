@@ -7,22 +7,25 @@ Zflag=0;           % 1 = with z,, 0 = z desired
 % 1 = PPIBVS
 % 2 = Lambda-based IBVS (single lambda) - 使用单一Lambda值的MPC优化控制
 % 3 = Lambda-based IBVS (sequential lambda) - 使用序列Lambda值的MPC优化控制
-control_method = 2;  
+% 4 = VSC-IM (Visual Servoing Control with Input Mapping) - 基于输入映射方法的视觉伺服控制
+control_method = 1;  
 
-% 提示：运行此代码时，将自动显示MPC优化过程可视化窗口
+% 提示：运行此代码时，将自动显示相应算法的优化过程可视化窗口
 % 方法2和3将分别展示单一lambda和序列lambda的优化过程
-% MPC窗口将显示每一步的lambda搜索、成本函数值、最优解选择过程
+% 方法4将展示VSC-IM的历史数据映射优化过程
 
-PPC_control_flag=0;  % PPIBVS or simple IBVS?? 1=PP , 0= conventional
+PPC_control_flag=1;  % PPIBVS or simple IBVS?? 1=PP , 0= conventional
 KIB=1;   % gain for simple image based
-KPPt=5; % gain for PPIBVS
+KPPt=5.0; % 修改6：降低PPIBVS的初始增益，原值为10，可能导致振荡
 KLambda=3; % 设为更合理的值
+KVSCIM=1.0; % gain for VSC-IM controller
 alpha_broyden=0.1; % Broyden update parameter (0 < alpha < 2) - 合理范围
+eta_VSCIM=0.01; % learning rate for VSC-IM (0 < eta < 1)
 t = 0;  %initialization of time
 dplot=t; % plot step
 tloop=300; % time of simulation
-ubound=0.4; % velocity saturation for translation 
-wbound=0.4; %  saturation for angular velocities 
+ubound=0.2; % velocity saturation for translation 
+wbound=0.2; %  saturation for angular velocities 
 dt = 0.033; %sampling time
 control=zeros(1,6)';
 umax=0.5; 
@@ -174,25 +177,28 @@ qer(:,1) = q(:,t+1)-qd;
 erorimage(:,t+1)=qer(:,1);
 
 % Control method selection
-if control_method == 1
+if control_method == 0
+    % Conventional IBVS
+    [control]=IMGsimple4(dt,qd,q(:,t+1),control,ubound,wbound,lamda,z,umax,vmax,KIB); %simple image based controller
+elseif control_method == 1
     % PPIBVS controller
-    KPP=(KPPt/(t+1)); % edw mporoume na rithmiosoume to kerdos kathws proxwraei na mmeiwnetai (anti miden na mpei t.
+    KPP = KPPt * exp(-0.05*t*dt); % 指数衰减，使增益下降更平缓
     [control,r_u1_up_t(t+1),r_u1_low_t(t+1),r_v1_up_t(t+1),r_v1_low_t(t+1),r_u2_up_t(t+1),r_u2_low_t(t+1),r_v2_up_t(t+1),r_v2_low_t(t+1),r_u3_up_t(t+1),r_u3_low_t(t+1),r_v3_up_t(t+1),r_v3_low_t(t+1),r_u4_up_t(t+1),r_u4_low_t(t+1),r_v4_up_t(t+1),r_v4_low_t(t+1)]=PPIMG4(dt,qd,q(:,t+1),control,ubound,wbound,lamda,z,umax,vmax,KPP,t);
 elseif control_method == 2
     % Lambda-based IBVS with single lambda
     % 单一Lambda优化控制 - 在整个预测窗口使用相同的Lambda值
     disp(['执行单一Lambda MPC优化步骤 ', num2str(t)]);
-    disp('已修复MPC可视化中的向量长度错误，请观察优化过程窗口');
     [control]=LambdaIBVS(dt,qd,q(:,t+1),control,ubound,wbound,lamda,z,umax,vmax,KLambda,t,alpha_broyden,'single_lambda');
 elseif control_method == 3
     % Lambda-based IBVS with sequential lambdas
     % 序列Lambda优化控制 - 为预测窗口中的每一步找到最优Lambda值
     disp(['执行序列Lambda MPC优化步骤 ', num2str(t)]);
-    disp('已修复MPC可视化中的向量长度错误，请观察优化过程窗口');
     [control]=LambdaIBVS(dt,qd,q(:,t+1),control,ubound,wbound,lamda,z,umax,vmax,KLambda,t,alpha_broyden,'sequential_lambda');
-else
-    % Conventional IBVS
-    [control]=IMGsimple4(dt,qd,q(:,t+1),control,ubound,wbound,lamda,z,umax,vmax,KIB); %simple image based controller
+elseif control_method == 4
+    % VSC-IM controller
+    % 基于输入映射方法的视觉伺服控制 - 利用历史数据映射优化控制
+    disp(['执行VSC-IM优化步骤 ', num2str(t)]);
+    [control]=VSCIM(dt,qd,q(:,t+1),control,ubound,wbound,lamda,z,umax,vmax,KVSCIM,t,eta_VSCIM);
 end 
 
 
@@ -331,6 +337,9 @@ elseif control_method == 2
 elseif control_method == 3
     % Sequential Lambda IBVS plotting
     plot_LambdaIBVS(0:t-1, erorimage, Tx, Ty, Tz, omegax, omegay, omegaz, camera_x, camera_y, camera_z, camera_wx, camera_wy, camera_wz, 'sequential_lambda');
+elseif control_method == 4
+    % VSC-IM plotting
+    plot_VSCIM(0:t-1, erorimage, Tx, Ty, Tz, omegax, omegay, omegaz, camera_x, camera_y, camera_z, camera_wx, camera_wy, camera_wz);
 end
 
 

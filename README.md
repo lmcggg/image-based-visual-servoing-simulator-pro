@@ -1,19 +1,54 @@
-# image-based-visual-servoing-simulator-pro
-a matlab simulator for ibvs method
-本项目是一个基于他人库的再次升级版本的matlab的ibvs的仿真代码实现。
-在此特别感谢：https://github.com/shahabheshmati/Image-Based-Visual-Servoing-Simulator
-你的代码框架作为本项目的基础，一方面修复了其中一些问题，和缺失的内容，另一方面新加入了来自：‘Robust NMPC for Uncalibrated IBVS Control of AUVs ’ 新的ibvs方法。论文的链接：https://ieeexplore.ieee.org/document/10818451
-。
-本项目非常简单可复现。在下载了本项目后，打开所在目录，打开main.m，选择当前你想要视线的ibvs方法（其中包括四种方法，传统ibvs，PPIBVS，单λ的RNMPC方法和多λ的RNMPC方法。）后两种是我新增加的。
-基本的效果如下所示：
+# Image-Based-Visual-Servoing-Simulator
 
-![fae8126bac07349532e6cd5d1124f0a](https://github.com/user-attachments/assets/ecc26d99-b322-452e-ba5e-d682b9ecdbda)
-![8eca18ff1c0fe9c9c00a25a25030a5f](https://github.com/user-attachments/assets/f5cbe9a7-3a31-4fc3-a1cf-31dd666baef0)
-![1c0856262b780c57195d5c09602035a](https://github.com/user-attachments/assets/dd59ac2e-f20e-4566-bec3-078f4dac77c0)
-以及我为后两种方法新增加的可视化方法：
-![de1c3d49eed93e0ef07120cef06670d](https://github.com/user-attachments/assets/8f3a61be-1133-4f7d-bd26-c95a86a041ee)
-请注意，后两种方法在运行的时候，我为了查看mpc的解算，在运行过程中会生成mpc运行可视化内容，这会减慢运行速度，如果您不需要，则可以自己进行删去。
+A environment built in Matlab for image Based Visual Servoing (IBVS) simulation studies. This simulator includes several IBVS methods:
 
-最后再次感谢Shahab Heshmati-alamdari，Charalampos P Bechlioulis，Minas V Liarokapis，Kostas J Kyriakopoulos 的代码库贡献，以及新方法论文的作者：Hang Gu和Chao Shen对新方法的贡献
+1. Conventional IBVS
+2. Prescribed Performance IBVS (PP-IBVS)
+3. Lambda-based IBVS (single and sequential lambda variants)
+4. Visual Servoing Control with Input Mapping (VSC-IM)
 
-后续会不断更新代码，增加更多有效的方法。
+## How to Use:
+For using just run the MAIN.m function and follow the steps described inside.
+
+To select a specific control method, modify the `control_method` parameter in MAIN.m:
+```matlab
+% Control method selection
+% 0 = conventional IBVS
+% 1 = PPIBVS
+% 2 = Lambda-based IBVS (single lambda)
+% 3 = Lambda-based IBVS (sequential lambda)
+% 4 = VSC-IM (Visual Servoing Control with Input Mapping)
+control_method = 4;  % Change this value to select a method
+```
+
+## Implemented Methods:
+
+### Conventional IBVS
+The standard Image-Based Visual Servoing approach using image Jacobian.
+
+### PP-IBVS
+The Prescribed Performance Image Based Visual Servoing controller proposed in "Prescribed performance image based visual servoing under field of view constraints", Shahab Heshmati-alamdari, Charalampos P Bechlioulis, Minas V Liarokapis, Kostas J Kyriakopoulos, IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS), 2014.
+
+### Lambda-based IBVS
+An implementation of Lambda-based IBVS with Broyden online Jacobian estimation and Min-Max NMPC optimization.
+
+### VSC-IM (Visual Servoing Control with Input Mapping)
+A novel approach that leverages historical data to improve visual servoing performance. VSC-IM uses past control inputs and their effects to adaptively optimize current control actions, resulting in improved convergence and robustness. For more details, see the [VSC-IM README](README_VSCIM.md).
+
+## Licence and Citing: 
+If you use Image-Based-Visual-Servoing-Simulator in work that leads to a publication, I would appreciate it if you would kindly cite relative paper in your manuscript. Please cite the paper:
+
+
+''Prescribed performance image based visual servoing under field of view constraints'', Shahab Heshmati-alamdari, Charalampos P Bechlioulis, Minas V Liarokapis, Kostas J Kyriakopoulos IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS), 2014.
+
+Bibtex:
+@CONFERENCE{Heshmati-Alamdari20142721,
+author={Heshmati-Alamdari, S. and Bechlioulis, C.P. and Liarokapis, M.V. and Kyriakopoulos, K.J.},
+title={Prescribed performance image based visual servoing under field of view constraints},
+journal={IEEE International Conference on Intelligent Robots and Systems},
+year={2014},
+pages={2721-2726},
+doi={10.1109/IROS.2014.6942934}
+}
+
+

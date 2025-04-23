@@ -14,17 +14,24 @@ ubound = 0.2; % velocity saturation
 % Create a new figure for IBVS results
 figure('Name', 'Conventional IBVS Results', 'NumberTitle', 'off')
 
+% 获取向量长度
+time_length = length(time);
+error_length = size(erorimage, 2);
+
+% 确保使用最小的长度以避免索引错误
+plot_length = min(time_length-1, error_length-1);
+
 % Plot control commands
 subplot(2, 2, 1)
 hold on
 box on
 title('Control commands velocities - Classic IBVS')
 ylabel('Translational (m/s)')
-plot(time(1:end-1)*dt, Tx(1:end-1), 'b', 'LineWidth', 1.5)
-plot(time(1:end-1)*dt, Ty(1:end-1), 'g', 'LineWidth', 1.5)
-plot(time(1:end-1)*dt, Tz(1:end-1), 'r', 'LineWidth', 1.5)
-line([0 time(end-1)*dt], [ubound ubound], 'Color', 'k', 'LineStyle', '-.', 'LineWidth', 1)
-line([0 time(end-1)*dt], [-ubound -ubound], 'Color', 'k', 'LineStyle', '-.', 'LineWidth', 1)
+plot(time(1:plot_length)*dt, Tx(1:plot_length), 'b', 'LineWidth', 1.5)
+plot(time(1:plot_length)*dt, Ty(1:plot_length), 'g', 'LineWidth', 1.5)
+plot(time(1:plot_length)*dt, Tz(1:plot_length), 'r', 'LineWidth', 1.5)
+line([0 time(plot_length)*dt], [ubound ubound], 'Color', 'k', 'LineStyle', '-.', 'LineWidth', 1)
+line([0 time(plot_length)*dt], [-ubound -ubound], 'Color', 'k', 'LineStyle', '-.', 'LineWidth', 1)
 legend('T_x', 'T_y', 'T_z')
 grid on
 
@@ -32,13 +39,13 @@ subplot(2, 2, 3)
 hold on
 box on
 ylabel('Rotational (rad/s)')
-plot(time(1:end-1)*dt, omegax(1:end-1), 'c', 'LineWidth', 1.5)
-plot(time(1:end-1)*dt, omegay(1:end-1), 'm', 'LineWidth', 1.5)
-plot(time(1:end-1)*dt, omegaz(1:end-1), 'k', 'LineWidth', 1.5)
+plot(time(1:plot_length)*dt, omegax(1:plot_length), 'c', 'LineWidth', 1.5)
+plot(time(1:plot_length)*dt, omegay(1:plot_length), 'm', 'LineWidth', 1.5)
+plot(time(1:plot_length)*dt, omegaz(1:plot_length), 'k', 'LineWidth', 1.5)
 xlabel('Time (s)')
 legend('\omega_x', '\omega_y', '\omega_z')
-line([0 time(end-1)*dt], [ubound ubound], 'Color', 'k', 'LineStyle', '-.', 'LineWidth', 1)
-line([0 time(end-1)*dt], [-ubound -ubound], 'Color', 'k', 'LineStyle', '-.', 'LineWidth', 1)
+line([0 time(plot_length)*dt], [ubound ubound], 'Color', 'k', 'LineStyle', '-.', 'LineWidth', 1)
+line([0 time(plot_length)*dt], [-ubound -ubound], 'Color', 'k', 'LineStyle', '-.', 'LineWidth', 1)
 grid on
 
 % Plot feature errors
@@ -49,24 +56,24 @@ box on
 xlabel('Time (s)')
 ylabel('Feature Error')
 title('Feature Errors')
-plot(time(1:end-1)*dt, erorimage(1,:), 'r', 'LineWidth', 1.5)
-plot(time(1:end-1)*dt, erorimage(2,:), 'r', 'LineStyle', '-.', 'LineWidth', 1.5)
-plot(time(1:end-1)*dt, erorimage(3,:), 'c', 'LineWidth', 1.5)
-plot(time(1:end-1)*dt, erorimage(4,:), 'c', 'LineStyle', '-.', 'LineWidth', 1.5)
-plot(time(1:end-1)*dt, erorimage(5,:), 'b', 'LineWidth', 1.5)
-plot(time(1:end-1)*dt, erorimage(6,:), 'b', 'LineStyle', '-.', 'LineWidth', 1.5)
-plot(time(1:end-1)*dt, erorimage(7,:), 'm', 'LineWidth', 1.5)
-plot(time(1:end-1)*dt, erorimage(8,:), 'm', 'LineStyle', '-.', 'LineWidth', 1.5)
+plot(time(1:plot_length)*dt, erorimage(1,1:plot_length), 'r', 'LineWidth', 1.5)
+plot(time(1:plot_length)*dt, erorimage(2,1:plot_length), 'r', 'LineStyle', '-.', 'LineWidth', 1.5)
+plot(time(1:plot_length)*dt, erorimage(3,1:plot_length), 'c', 'LineWidth', 1.5)
+plot(time(1:plot_length)*dt, erorimage(4,1:plot_length), 'c', 'LineStyle', '-.', 'LineWidth', 1.5)
+plot(time(1:plot_length)*dt, erorimage(5,1:plot_length), 'b', 'LineWidth', 1.5)
+plot(time(1:plot_length)*dt, erorimage(6,1:plot_length), 'b', 'LineStyle', '-.', 'LineWidth', 1.5)
+plot(time(1:plot_length)*dt, erorimage(7,1:plot_length), 'm', 'LineWidth', 1.5)
+plot(time(1:plot_length)*dt, erorimage(8,1:plot_length), 'm', 'LineStyle', '-.', 'LineWidth', 1.5)
 legend('e u_1', 'e v_1', 'e u_2', 'e v_2', 'e u_3', 'e v_3', 'e u_4', 'e v_4', 'Location', 'eastoutside')
 
 % Plot the error norm
 subplot(2, 2, 4)
 % Calculate the norm of the error at each time step
-error_norm = zeros(1, length(time)-1);
-for i = 1:length(time)-1
+error_norm = zeros(1, plot_length);
+for i = 1:plot_length
     error_norm(i) = norm(erorimage(:,i));
 end
-plot(time(1:end-1)*dt, error_norm, 'LineWidth', 1.5)
+plot(time(1:plot_length)*dt, error_norm, 'LineWidth', 1.5)
 xlabel('Time (s)')
 ylabel('Error Norm')
 title('Feature Error Norm')

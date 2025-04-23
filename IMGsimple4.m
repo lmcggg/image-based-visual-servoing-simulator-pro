@@ -18,8 +18,8 @@ er=qd-q;
      J=[J1;J2;J3;J4];
      
      
-     % 与Lambda-IBVS控制器保持一致的控制方向（添加负号）
-     control=-K*pinv(J)*er;
+     % 保持与其他控制器一致的控制方向
+     control=K*pinv(J)*er;
      
      
      

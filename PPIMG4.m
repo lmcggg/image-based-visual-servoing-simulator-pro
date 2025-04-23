@@ -50,9 +50,11 @@ r_u4_low_0=qd(7,1)-umin;
 r_v4_low_0=qd(8,1)-vmin;
      
      
-r_inf=0.001;
+% 修改1：增加稳态误差允许的最大值
+r_inf=0.01;  % 原先为0.001，过小可能导致难以收敛
 
-l=0.1;
+% 修改2：增大衰减速率，以符合论文推荐值
+l=0.45;  % 原先为0.1，更快的衰减速率有助于更快收敛
 
 
 
@@ -98,6 +100,16 @@ j_v3 =   ((q(6,1)-qd(6,1))  -  ((r_v3_up_t - r_v3_low_t )/2) ) / (( r_v3_up_t + 
 
 j_u4 =   ((q(7,1)-qd(7,1))  -  ((r_u4_up_t - r_u4_low_t )/2) ) / (( r_u4_up_t + r_u4_low_t  )/2);
 j_v4 =   ((q(8,1)-qd(8,1))  -  ((r_v4_up_t - r_v4_low_t )/2) ) / (( r_v4_up_t + r_v4_low_t  )/2);  
+
+% 修改3：确保归一化误差在(-1,1)区间内，防止对数变换出现数值问题
+j_u1 = max(min(j_u1, 0.99), -0.99);
+j_v1 = max(min(j_v1, 0.99), -0.99);
+j_u2 = max(min(j_u2, 0.99), -0.99);
+j_v2 = max(min(j_v2, 0.99), -0.99);
+j_u3 = max(min(j_u3, 0.99), -0.99);
+j_v3 = max(min(j_v3, 0.99), -0.99);
+j_u4 = max(min(j_u4, 0.99), -0.99);
+j_v4 = max(min(j_v4, 0.99), -0.99);
 
 
 % % 
@@ -176,9 +188,14 @@ e_v4 = real(log(  ((1+j_v4)/(1-j_v4)) *(r_v4_up_t/r_v4_low_t)   ));
 % plot(t*dt,r_v4_up_t ,'*')
 % plot(t*dt,-r_v4_low_t ,'*')
 
+% 修改4：改进控制信号计算，使用更稳定的阻尼伪逆和更简单的增益结构
+% 增加阻尼系数以增强伪逆稳定性
+lambda_damp = 0.01;
+J_dagger = J' * inv(J*J' + lambda_damp*eye(size(J,1)));
      
-control=(-diag([1*K K K K 1*K 1*K]))*pinv(J)*[e_u1,e_v1,e_u2,e_v2,e_u3,e_v3,e_u4,e_v4]';  
-%control=-control;
+% 使用单一增益而不是对角矩阵
+control = -K * J_dagger * [e_u1,e_v1,e_u2,e_v2,e_u3,e_v3,e_u4,e_v4]';  
+% 原来的代码：control=(-diag([1*K K K K 1*K 1*K]))*pinv(J)*[e_u1,e_v1,e_u2,e_v2,e_u3,e_v3,e_u4,e_v4]';
      
      
      
