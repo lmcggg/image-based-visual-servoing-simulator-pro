@@ -1,7 +1,8 @@
 # image-based-visual-servoing-simulator-pro
 a matlab simulator for ibvs method
 本项目是一个基于他人库的再次升级版本的matlab的ibvs的仿真代码实现。
-在此特别感谢：https://github.com/shahabheshmati/Image-Based-Visual-Servoing-Simulator，你的代码框架作为本项目的基础，一方面修复了其中一些问题，和缺失的内容，另一方面新加入了来自：的新的ibvs方法。
+在此特别感谢：https://github.com/shahabheshmati/Image-Based-Visual-Servoing-Simulator
+你的代码框架作为本项目的基础，一方面修复了其中一些问题，和缺失的内容，另一方面新加入了来自：的新的ibvs方法。
 本项目非常简单可复现。在下载了本项目后，打开所在目录，打开main。m，选择当前你想要视线的ibvs方法（其中包括四种方法，传统ibvs，PPIBVS，单λ的RNMPC方法和多λ的RNMPC方法。）后两种是我新增加的，该方法出自：，非常感谢您的论文，受益匪浅。
 基本的效果如下所示：
 
