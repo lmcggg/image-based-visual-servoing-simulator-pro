@@ -2,8 +2,9 @@
 a matlab simulator for ibvs method
 本项目是一个基于他人库的再次升级版本的matlab的ibvs的仿真代码实现。
 在此特别感谢：https://github.com/shahabheshmati/Image-Based-Visual-Servoing-Simulator
-你的代码框架作为本项目的基础，一方面修复了其中一些问题，和缺失的内容，另一方面新加入了来自：‘Robust NMPC for Uncalibrated IBVS Control of AUVs ’ 新的ibvs方法。论文的链接：https://ieeexplore.ieee.org/document/10818451。
-本项目非常简单可复现。在下载了本项目后，打开所在目录，打开main。m，选择当前你想要视线的ibvs方法（其中包括四种方法，传统ibvs，PPIBVS，单λ的RNMPC方法和多λ的RNMPC方法。）后两种是我新增加的。
+你的代码框架作为本项目的基础，一方面修复了其中一些问题，和缺失的内容，另一方面新加入了来自：‘Robust NMPC for Uncalibrated IBVS Control of AUVs ’ 新的ibvs方法。论文的链接：https://ieeexplore.ieee.org/document/10818451
+。
+本项目非常简单可复现。在下载了本项目后，打开所在目录，打开main.m，选择当前你想要视线的ibvs方法（其中包括四种方法，传统ibvs，PPIBVS，单λ的RNMPC方法和多λ的RNMPC方法。）后两种是我新增加的。
 基本的效果如下所示：
 
 ![fae8126bac07349532e6cd5d1124f0a](https://github.com/user-attachments/assets/ecc26d99-b322-452e-ba5e-d682b9ecdbda)
@@ -13,5 +14,6 @@ a matlab simulator for ibvs method
 ![de1c3d49eed93e0ef07120cef06670d](https://github.com/user-attachments/assets/8f3a61be-1133-4f7d-bd26-c95a86a041ee)
 请注意，后两种方法在运行的时候，我为了查看mpc的解算，在运行过程中会生成mpc运行可视化内容，这会减慢运行速度，如果您不需要，则可以自己进行删去。
 
-最后再次感谢：的贡献，以及新方法论文的作者：Hang Gu和Chao Shen：
+最后再次感谢Shahab Heshmati-alamdari，Charalampos P Bechlioulis，Minas V Liarokapis，Kostas J Kyriakopoulos 的代码库贡献，以及新方法论文的作者：Hang Gu和Chao Shen对新方法的贡献
+
 后续会不断更新代码，增加更多有效的方法。
